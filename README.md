@@ -18,4 +18,11 @@ Upload a CSV file containing transaction data to detect fraud.
 For reference , I have attached a sample input file . 
 
 
+# 💳 FraudCard App
+
+https://fraudcard-app-wshaiktkkteisciidpmcqg.streamlit.app/
+
+Detect fraudulent credit card transactions using Machine Learning. Upload your CSV file and get fraud predictions with interactive visualizations.
+
+
    
