@@ -31,17 +31,21 @@ st.sidebar.markdown("""
 # -------------------------------
 # 🎬 Animated Lottie Header
 # -------------------------------
+# 🧠 Load Lottie animation
 def load_lottie_url(url: str):
     r = requests.get(url)
     if r.status_code != 200:
         return None
     return r.json()
 
-lottie_fraud = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_s1ofpcqn.json")
-st_lottie(lottie_fraud, height=200, key="fraud")
+lottie_fraud = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json")
 
-st.title("💳 FraudCard Detector")
-st.markdown("Upload a CSV and let AI catch the frauds! 🚨")
+# Show animation only if loaded
+if lottie_fraud:
+    st_lottie(lottie_fraud, height=200, key="fraud")
+else:
+    st.info("🚧 Animation couldn't load. Try refreshing or check internet.")
+
 
 # -------------------------------
 # 💾 Load Model & Features
