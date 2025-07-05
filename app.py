@@ -3,56 +3,60 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# Set page settings
+# ----------------------
+# 💾 Load model and features
+# ----------------------
+model_data = joblib.load("fraud_model.pkl")
+model = model_data["model"]
+expected_cols = model_data["features"]
+
+# ----------------------
+# 🎨 Streamlit App UI
+# ----------------------
 st.set_page_config(page_title="💳 FraudCard Detector", layout="centered")
 
-# Title
 st.title("💳 FraudCard Detector")
-st.markdown("Upload a CSV file containing transaction data to detect fraudulent activities.")
+st.markdown("Upload a CSV file of transactions and detect fraudulent activity using a trained ML model.")
 
-# Load the trained model
-model = joblib.load("fraud_model.pkl")
+uploaded_file = st.file_uploader("📂 Upload CSV File", type=["csv"])
 
-# File uploader
-uploaded_file = st.file_uploader("📂 Upload your CSV file", type=["csv"])
-
+# ----------------------
+# 🧪 Prediction Block
+# ----------------------
 if uploaded_file is not None:
-    # Read the uploaded file
     data = pd.read_csv(uploaded_file)
-    
-    st.subheader("📊 Preview of Uploaded Data")
+
+    st.subheader("📊 Uploaded Data Preview")
     st.dataframe(data.head())
 
     if st.button("🚨 Predict Fraud"):
         try:
-            # Copy and clean data before prediction
+            # ✅ Clean Data
             data_clean = data.copy()
 
-            # Drop columns not used in model (like names or IDs)
-            columns_to_drop = ['nameOrig', 'nameDest']  # Adjust if needed
+            # Drop columns not used in training (e.g., names, IDs)
+            columns_to_drop = ['nameOrig', 'nameDest']
             data_clean = data_clean.drop(columns=columns_to_drop, errors='ignore')
 
-            # Replace inf with NaN and drop rows with NaN
+            # Replace inf, drop missing
             data_clean = data_clean.replace([np.inf, -np.inf], np.nan)
             data_clean = data_clean.dropna()
 
-            # Ensure numeric data
-            data_clean = data_clean.select_dtypes(include=[np.number])
+            # ✅ Match the feature columns used during training
+            data_clean = data_clean[expected_cols]
 
-            # Predict
+            # ✅ Predict
             predictions = model.predict(data_clean)
-
-            # Add predictions to original data
             data['Prediction'] = predictions
 
-            # Show results
+            # ✅ Output
             st.success(f"✅ Prediction complete! Fraudulent transactions detected: {sum(predictions)}")
             st.dataframe(data)
 
-            # Optional: show counts
-            st.subheader("📈 Fraud vs. Non-Fraud Count")
+            # 📈 Chart
+            st.subheader("📈 Fraud vs Non-Fraud Count")
             st.bar_chart(data['Prediction'].value_counts())
 
         except Exception as e:
-            st.error("❌ Error during prediction. Please check your file format and try again.")
+            st.error("❌ Error during prediction. Make sure your file matches the model's expected format.")
             st.exception(e)
