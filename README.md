@@ -13,7 +13,9 @@ This is a simple Machine Learning app built using Streamlit that detects fraudul
 
 Upload a CSV file containing transaction data to detect fraud.
 
-📂 [Click here to download the sample CSV file](./sample_input.csv) and test the app!
+## Sample input file 
+
+For reference , I have attached a sample input file . 
 
 
    
